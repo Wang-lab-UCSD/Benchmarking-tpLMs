@@ -1,0 +1,1 @@
+# NOTE! These scripts cannot be run directly from this repository. For the pLM of interest, clone the original repo. Follow their instructions on environment setup, then copy the appropriate generation.py script into the corresponding pLM repo, then run from within.
