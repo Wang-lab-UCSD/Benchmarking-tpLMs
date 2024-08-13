@@ -1,4 +1,4 @@
-# Benchmarking text-integrated protein language models embeddings and their combinations
+# Benchmarking text-integrated protein language models embeddings and embedding fusion on diverse downstream tasks
 
 :sparkles:In this repository, we have the datasets, models, and code used in our study!:sparkles:
 ## :hammer_and_wrench: Installation and environment set-up
