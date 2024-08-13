@@ -1,0 +1,13 @@
+# Training Parameters
+training:
+  batch_size: 4096
+  learning_rate: 0.0001
+  iteration: 50
+ 
+scheduler:
+  t_0: 10
+
+directories:
+  train: "data/ppi/Intra1_interaction.tsv"
+  validation: "data/ppi/Intra0_interaction.tsv"
+  test: "data/ppi/Intra2_interaction.tsv"

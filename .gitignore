@@ -1,0 +1,10 @@
+*.pyc
+*.log
+*.out
+slurm_outputs/*
+model_checkpoints/*
+embeddings/*
+data/*
+*.ipynb
+*.pth
+*.tar.gz

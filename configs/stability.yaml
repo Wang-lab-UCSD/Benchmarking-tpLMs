@@ -1,0 +1,10 @@
+# Training Parameters
+training:
+  batch_size: 4096
+  learning_rate: 0.00226274169
+  iteration: 120
+
+directories:
+  train: "data/stability/stability_train.tsv"
+  validation: "data/stability/stability_val.tsv"
+  test: "data/stability/stability_test.tsv"

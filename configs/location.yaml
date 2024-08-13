@@ -1,0 +1,10 @@
+# Training Parameters
+training:
+  batch_size: 4096
+  learning_rate: 0.00226274169
+  iteration: 120
+
+directories:
+  train: "data/location/location_train.tsv"
+  validation: "data/location/location_val.tsv"
+  test: "data/location/location_hard.tsv"

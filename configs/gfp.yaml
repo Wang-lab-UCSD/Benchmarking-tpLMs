@@ -1,0 +1,10 @@
+# Training Parameters
+training:
+  batch_size: 4096
+  learning_rate: 0.00226274169
+  iteration: 240
+
+directories:
+  train: "data/gfp/gfp_train.tsv"
+  validation: "data/gfp/gfp_val.tsv"
+  test: "data/gfp/gfp_test.tsv"

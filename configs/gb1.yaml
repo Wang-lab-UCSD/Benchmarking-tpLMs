@@ -1,0 +1,10 @@
+# Training Parameters
+training:
+  batch_size: 4096
+  learning_rate: 0.00226274169
+  iteration: 240
+
+directories:
+  train: "data/gb1/gb1_train.tsv"
+  validation: "data/gb1/gb1_val.tsv"
+  test: "data/gb1/gb1_test.tsv"
