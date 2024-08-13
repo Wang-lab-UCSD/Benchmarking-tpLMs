@@ -2,9 +2,9 @@
 
 :sparkles:In this repository, we have the datasets, models, and code used in our study!:sparkles:
 ## :hammer_and_wrench: Installation and environment set-up
-First, please clone this repository and a corresponding conda environment :snake:.\
+First, please clone this repository and create a corresponding conda environment :snake:.\
 :exclamation: NOTE: For the PyTorch installation, please install the version appropriate for your hardware: [see here](https://pytorch.org/get-started/previous-versions/)
-```
+```bash
 conda create -n tplm python=3.10
 conda activate tplm
 conda install pytorch==2.2.2 torchvision==0.17.2 torchaudio==2.2.2 pytorch-cuda=12.1 -c pytorch -c nvidia
