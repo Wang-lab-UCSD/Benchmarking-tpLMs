@@ -27,24 +27,43 @@ To reproduce the results from our study in sequential order, please follow the s
 The data and embeddings are stored in HuggingFace and our `download_data_embs.sh` uses `huggingface-cli` to download the necessary files. 
 
 :exclamation: NOTE: Before running `download_data_embs.sh`, please add your HuggingFace token after the `--token` flag. Once added, run `download_data_embs.sh`.
+```bash
+huggingface-cli login --add-to-git-credential --token # Add your Huggingface token here 
+```
 
-**Dataset Details**
-
+<details>
+  <summary><strong>Dataset Details</strong></summary>
+  <br>
 The datasets used in this study are created by the following authors:
+  
   - AAV, GB1, and Meltome: https://github.com/J-SNACKKB/FLIP
+  
   - GFP and Stability:  https://github.com/songlab-cal/tape
+
   - Location: https://github.com/HannesStark/protein-localization
+  
   - PPI: https://github.com/daisybio/data-leakage-ppi-prediction
+  
   - CATH/Homologous sequence recovery: https://www.cathdb.info/
 
-**Generating New Embeddings**
+</details>
+
+
+<details>
+  <summary><strong>Generating New Embeddings</strong></summary>
+  <br>
 
 We have provided sample scripts for generating embeddings for each protein language model (pLM) in the `embedding_generation/` directory. To generate your own embeddings using the pLMs from this study, follow these steps:
-1. Clone the Repository:
+
+1. **Clone the Repository**:
    - Clone the repository of the respective pLM you intend to use. Please follow the specific setup and environment setup instructions detailed in each pLM's repository.
-2. Generate Embeddings:
+
+2. **Generate Embeddings**:
    - Copy the embedding generation script we provided in `embedding_generation/` into the cloned pLM's directory. Each pLM has a different embedding generation script, so please make sure you use the appropriate one.  
-   - Execute these scripts within the pLM's environment and directory to generate new embeddings. Ensure that the outputs are directed to the appropriate location. 
+   - Execute these scripts within the pLM's environment and directory to generate new embeddings. Ensure that the outputs are directed to the appropriate location.
+
+</details>
+
 ---
 ### :two: Benchmarking text-integrated protein language models against ESM2 3B
 Run `run_tplm_benchmarks.sh` to train models for benchmarking tpLMs against ESM2 3B on AAV, GB1, GFP, Location, Meltome, and Stability. 
