@@ -39,11 +39,11 @@ The datasets used in this study are created by the following authors:
 
 **Generating New Embeddings**
 
-We have provided sample scripts for generating embeddings for each protein language model (pLM) in the `data/embedding_generation` directory. To generate your own embeddings using the pLMs from this study, follow these steps:
+We have provided sample scripts for generating embeddings for each protein language model (pLM) in the `embedding_generation/` directory. To generate your own embeddings using the pLMs from this study, follow these steps:
 1. Clone the Repository:
    - Clone the repository of the respective pLM you intend to use. Please follow the specific setup and environment setup instructions detailed in each pLM's repository.
 2. Generate Embeddings:
-   - Copy the embedding generation script we provided in `data/embedding_generation` into the cloned pLM's directory. Each pLM has a different embedding generation script, so please make sure you use the appropriate one.  
+   - Copy the embedding generation script we provided in `embedding_generation/` into the cloned pLM's directory. Each pLM has a different embedding generation script, so please make sure you use the appropriate one.  
    - Execute these scripts within the pLM's environment and directory to generate new embeddings. Ensure that the outputs are directed to the appropriate location. 
 ---
 ### :two: Benchmarking text-integrated protein language models against ESM2 3B
