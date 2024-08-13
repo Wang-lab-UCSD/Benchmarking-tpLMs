@@ -35,7 +35,7 @@ The datasets used in this study are created by the following authors:
   - GFP and Stability:  https://github.com/songlab-cal/tape
   - Location: https://github.com/HannesStark/protein-localization
   - PPI: https://github.com/daisybio/data-leakage-ppi-prediction
-  - CATH/Homologous sequence recovery: https://github.com/wukevin/proteinclip
+  - CATH/Homologous sequence recovery: https://www.cathdb.info/
 
 **Generating New Embeddings**
 
