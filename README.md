@@ -14,7 +14,7 @@ pip install -U "huggingface_hub[cli]"
 We provide the `environment.yml` but recommend running the commands above instead of installing from the yml file.
 
 ## :computer: Reproducing Results 
-:exclamation: NOTE: These experiments are performed with an NVIDIA A6000 GPU with CUDA 12.3. Please note exact reproducibility is not guaranteed across device: [see here](https://pytorch.org/docs/stable/notes/randomness.html)
+:exclamation: NOTE: These experiments are performed with an NVIDIA A6000 GPU with CUDA 12.3. Please note exact reproducibility is not guaranteed across devices: [see here](https://pytorch.org/docs/stable/notes/randomness.html)
 
 To reproduce the results from our study in sequential order, please follow the steps listed below.
 1. `download_data_embs.sh`
