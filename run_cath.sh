@@ -1,7 +1,12 @@
-embeddings=(B C D E F G)
 
 # Location of the logs
 log_directory="results/cath_results"
+# Clear any previous logging
+if [ -f "${log_directory}/cath_log.tsv" ]; then
+    rm "${log_directory}/cath_log.tsv"
+fi
+
+embeddings=(B C D E F G)
 
 # Store the accuracies for individual embeddings
 declare -A accs

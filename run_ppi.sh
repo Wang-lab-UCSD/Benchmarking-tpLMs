@@ -1,9 +1,14 @@
 
-embeddings=(B C D E F G)
-seeds=(2 4 8 16 32)
-
 # Location of the logs
 log_directory="results/ppi_results"
+
+# Clear any previous logging
+if [ -f "${log_directory}/ppi_log.tsv" ]; then
+    rm "${log_directory}/ppi_log.tsv"
+fi
+
+embeddings=(B C D E F G)
+seeds=(2 4 8 16 32)
 
 # Store the average auprc for individual embeddings
 declare -A auprc_averages
