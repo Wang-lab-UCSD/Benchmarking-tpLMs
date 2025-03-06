@@ -162,8 +162,8 @@ def calculate_classification_metrics(label, probabilities):
     predictions = np.round(probabilities)
 
     aucroc = roc_auc_score(label, probabilities)
-    true_positive_rate, false_positive_rate, _ = precision_recall_curve(label, probabilities)
-    prc = auc(false_positive_rate, true_positive_rate)
+    precision, recall, _ = precision_recall_curve(label, probabilities)
+    prc = auc(recall, precision)
     accuracy = accuracy_score(label, predictions)
     true_negative, false_positive, false_negative, true_positive = confusion_matrix(label, predictions).ravel()
     sensitivity = recall_score(label, predictions)
