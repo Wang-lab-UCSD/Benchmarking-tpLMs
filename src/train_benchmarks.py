@@ -5,6 +5,7 @@ from model import EmbeddingNetwork
 from main_utils import (load_config, set_seed, get_device, get_run_name, setup_logging_directories, load_embeddings, concatenate_embeddings, count_parameters, save_model)
 from train_utils import (get_data_loader, train_step, test_step)
 import os, csv
+import time
 
 
 def main():
@@ -20,6 +21,7 @@ def main():
     args = parser.parse_args()
     
     # Load config, set seed, and get device
+    start_time = time.time()
     config = load_config(args.dataset)
     set_seed(args.seed)
     device = get_device(args.device)
@@ -74,14 +76,16 @@ def main():
                 model_save_path = os.path.join(model_checkpoint_directory, f"{run_name}_best.pth")
                 save_model(model, model_save_path)
         
+        # Record the time it takes for training
+        end_time = time.time()
+        run_time = end_time - start_time
+
         if args.evaluate:
             # Load the model with lowest validation loss for evaluation on the test set
             model.load_state_dict(torch.load(model_save_path))
             best_val_loss, best_val_metric = test_step(model, validation_loader, criterion, device)
             test_loss, test_metric = test_step(model, test_loader, criterion, device)
-            log_writer.writerow([args.dataset, args.embeddings, args.hidden_dimension, args.seed, best_val_metric, test_metric, parameter_count])
-
-
+            log_writer.writerow([args.dataset, args.embeddings, args.hidden_dimension, args.seed, best_val_metric, test_metric, parameter_count, run_time])
 
 if __name__ == "__main__":
     main()
