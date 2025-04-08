@@ -25,9 +25,9 @@ def main():
         print(f"Error: {e}")
         return
     
-    query_domains = load_superfamily_mapping("/new-stg/home/young/plm-fusion-for-ppi/data/cath/cath_queries.tsv")
-    all_domains = load_superfamily_mapping("/new-stg/home/young/plm-fusion-for-ppi/data/cath/cath_superfamilies.tsv")
-
+    query_domains = load_superfamily_mapping("data/cath/cath_queries.tsv")
+    all_domains = load_superfamily_mapping("data/cath/cath_superfamilies.tsv")
+    
     # Convert embedding dictionary to matrix for batch processing
     all_domain_ids, all_embeddings = zip(*[(id, embedding_dictionary[id]) for id in all_domains])
     all_embeddings_tensor = torch.stack(all_embeddings).to(args.device)
