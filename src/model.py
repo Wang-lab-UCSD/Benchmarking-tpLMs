@@ -32,6 +32,43 @@ class EmbeddingNetwork(nn.Module):
 
         return predicted_fitness.squeeze()
 
+import torch
+import torch.nn as nn
+
+class WideEmbeddingNetwork(nn.Module):
+    def __init__(self, input_dimension, output_dimension, hidden_dimension, width_multiplier, dropout_rate):
+        super().__init__()
+
+        self.input_dimension = input_dimension
+        self.output_dimension = output_dimension
+        self.hidden_dimension = hidden_dimension
+        self.width = int(hidden_dimension * width_multiplier)
+        self.dropout_rate = dropout_rate
+
+        self.normalize = nn.BatchNorm1d(self.input_dimension)
+        self.input_layer = nn.Linear(self.input_dimension, self.width)
+        self.relu = nn.ReLU()
+        self.dropout = nn.Dropout(self.dropout_rate)
+        self.hidden_layer = nn.Linear(self.width, self.hidden_dimension)
+        self.output_layer = nn.Linear(self.hidden_dimension, self.output_dimension)
+        
+        self._initialize_weights()
+
+    def _initialize_weights(self):
+        nn.init.xavier_uniform_(self.input_layer.weight)
+        nn.init.xavier_uniform_(self.hidden_layer.weight)
+        nn.init.xavier_uniform_(self.output_layer.weight)
+
+    def forward(self, protein):
+        x = self.normalize(protein)
+        x = self.relu(self.input_layer(x))
+        x = self.dropout(x)
+        x = self.relu(self.hidden_layer(x))
+        x = self.output_layer(x)
+        return x.squeeze()
+
+
+
 # Model architecture based on https://www.biorxiv.org/content/10.1101/2024.01.29.577794v1 (https://github.com/navid-naderi/PLM_SWE/tree/main)
 class PPIClassifier(nn.Module):
     def __init__(self, input_dimension, hidden_dimension):

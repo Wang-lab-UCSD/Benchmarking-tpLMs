@@ -3,7 +3,7 @@ import os
 import esm
 
 def load_model_and_alphabet(device):
-    model, alphabet = esm.pretrained.esm2_t36_3B_UR50D()
+    model, alphabet = esm.pretrained.esm2_t33_650M_UR50D()
     model.to(device)
     model.eval()
     return model, alphabet
@@ -14,8 +14,8 @@ def get_protein_embeddings(model, alphabet, sequence, device):
     batch_tokens = batch_tokens.to(device)
 
     with torch.no_grad():
-        results = model(batch_tokens, repr_layers=[36], return_contacts=False)
-        return torch.mean(results["representations"][36][0, 1:-1, :].to('cpu'), dim=0)
+        results = model(batch_tokens, repr_layers=[33], return_contacts=False)
+        return torch.mean(results["representations"][33][0, 1:-1, :].to('cpu'), dim=0)
 
 def process_sequences(model, alphabet, data_list, max_length, device, protein_dictionary):
     cpu_queue = []
@@ -43,24 +43,25 @@ def process_sequences(model, alphabet, data_list, max_length, device, protein_di
             protein_dictionary[uniprot_id] = get_protein_embeddings(model, alphabet, sequence, 'cpu')
 
 def main():
-    datasets = ['gb1_sequences']
+    #datasets = ['aav', 'gb1', 'gfp', 'location', 'meltome', 'stability']
+    datasets = ['ppi']
     max_length = 5800
-    base_dir = "../../Benchmarking-tpLMs/data/gb1"
-    output_dir = '../../Benchmarking-tpLMs/embeddings/gb1/esm2(3B)'
-    protein_dictionary = {}
-    combined_data_list = []
 
     device = torch.device('cuda')
     model, alphabet = load_model_and_alphabet(device)
+    model.eval()
 
     for dataset in datasets:
-        data_file = os.path.join(base_dir, f"{dataset}.tsv")
+        base_dir = f"../../Benchmarking-tpLMs/data/{dataset}"
+        output_dir = f'../../Benchmarking-tpLMs/embeddings/{dataset}/esm2(650M)'
+        protein_dictionary = {}
+        data_list = []
+        data_file = os.path.join(base_dir, f"{dataset}_sequences.tsv")
         with open(data_file, "r") as f:
-            combined_data_list.extend(f.read().strip().split('\n'))
-
-    process_sequences(model, alphabet, combined_data_list, max_length, device, protein_dictionary)
-    os.makedirs(output_dir, exist_ok=True)
-    torch.save(protein_dictionary, os.path.join(output_dir, 'protein_dictionary.pt'))
+            data_list.extend(f.read().strip().split('\n'))
+        process_sequences(model, alphabet, data_list, max_length, device, protein_dictionary)
+        os.makedirs(output_dir, exist_ok=True)
+        torch.save(protein_dictionary, os.path.join(output_dir, 'protein_dictionary.pt'))
 
 if __name__ == "__main__":
     main()

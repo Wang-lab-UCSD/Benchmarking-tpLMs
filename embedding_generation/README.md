@@ -8,6 +8,9 @@
 6. [ProteinCLIP](https://github.com/wukevin/proteinclip) (Commit c732a40)
 7. [ProTrek](https://github.com/westlake-repl/ProTrek) (Commit ba433f0)
 
+For Ankh and ProtT5, we use the Huggingface checkpoints:
+8. [Ankh](https://huggingface.co/ElnaggarLab/ankh-large) (Ankh Large)
+9. [ProtT5](https://huggingface.co/Rostlab/prot_t5_xl_uniref50) (ProtT5 XL Uniref50)
 ---
 The main function is formatted as such:
 ```python

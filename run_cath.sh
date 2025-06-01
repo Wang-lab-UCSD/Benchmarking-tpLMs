@@ -1,4 +1,3 @@
-
 # Location of the logs
 log_directory="results/cath_results"
 # Clear any previous logging
@@ -6,7 +5,7 @@ if [ -f "${log_directory}/cath_log.tsv" ]; then
     rm "${log_directory}/cath_log.tsv"
 fi
 
-embeddings=(B C D E F G)
+embeddings=("0" "1" "2" B C D E F G)
 
 # Store the accuracies for individual embeddings
 declare -A accs
@@ -56,7 +55,28 @@ done
 echo "Best combination found: ${best_combination[*]}"
 
 # Now do homologous sequence recovery with all combinations to identify the true best combination
-embeddings=(BC BD BE BF BG CD CE CF CG DE DF DG EF EG FG BCD BCE BCF BCG BDE BDF BDG BEF BEG BFG CDE CDF CDG CEF CEG CFG DEF DEG DFG EFG BCDE BCDF BCDG BCEF BCEG BCFG BDEF BDEG BDFG BEFG CDEF CDEG CDFG CEFG DEFG BCDEF BCDEG BCDFG BCEFG BDEFG CDEFG BCDEFG)
+elements=("0" "1" "2" "B" "C" "D" "E" "F" "G")
+embeddings=()
+
+num_elements=${#elements[@]}
+total=$((1 << num_elements))  # 2^n subsets
+
+for ((i=1; i<total; i++)); do
+    subset=""
+    for ((j=0; j<num_elements; j++)); do
+        if (( (i >> j) & 1 )); then
+            subset+="${elements[j]}"
+        fi
+    done
+    if (( ${#subset} > 1 )); then
+        embeddings+=("$subset")
+    fi
+done
+
+IFS=$'\n' sorted=($(printf "%s\n" "${embeddings[@]}" | sort))
+embeddings=("${sorted[@]}")
+
+
 for emb in "${embeddings[@]}"; do
     python3 src/cath.py --dataset 'cath' --embeddings "$emb" --device 'cuda'
 done

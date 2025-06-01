@@ -1,4 +1,3 @@
-
 # Location of the logs
 log_directory="results/ppi_results"
 
@@ -18,7 +17,7 @@ for emb in "${embeddings[@]}"; do
     total_auprc=0
     for seed in "${seeds[@]}"; do
         # Train model using that embedding for 5 seeds
-        python3 src/train_ppi.py --dataset 'ppi' --embeddings "$emb" --hidden_dimension 1024 --device 'cuda' --seed "$seed" --evaluate
+        python3 src/train_ppi.py --mode 'train' --dataset 'ppi' --embeddings "$emb" --hidden_dimension 1024 --device 'cuda' --seed "$seed" --evaluate
         auprc=$(awk -F'\t' -v emb="$emb" -v seed="$seed" '($3 == seed && $1 == emb) {print $13}' "${log_directory}/ppi_log.tsv")
         total_auprc=$(awk -v total="$total_auprc" -v add="$auprc" 'BEGIN { print total + add }')
     done
@@ -51,7 +50,7 @@ for emb in "${sorted_embeddings[@]}"; do
         
         # Train model using current combination of embeddings
         for seed in "${seeds[@]}"; do
-            python3 src/train_ppi.py --dataset 'ppi' --embeddings "$new_combination_str" --hidden_dimension 1024 --device 'cuda' --seed "$seed" --evaluate
+            python3 src/train_ppi.py --mode 'train' --dataset 'ppi' --embeddings "$new_combination_str" --hidden_dimension 1024 --device 'cuda' --seed "$seed" --evaluate
         done
 
         # Calculate average AUPRC for the new combination
@@ -79,6 +78,23 @@ echo "Best combination found: ${best_combination[*]}"
 embeddings=(BC BD BE BF BG CD CE CF CG DE DF DG EF EG FG BCD BCE BCF BCG BDE BDF BDG BEF BEG BFG CDE CDF CDG CEF CEG CFG DEF DEG DFG EFG BCDE BCDF BCDG BCEF BCEG BCFG BDEF BDEG BDFG BEFG CDEF CDEG CDFG CEFG DEFG BCDEF BCDEG BCDFG BCEFG BDEFG CDEFG BCDEFG)
 for emb in "${embeddings[@]}"; do
     for seed in "${seeds[@]}"; do
-        python3 src/train_ppi.py --dataset 'ppi' --embeddings "$emb" --hidden_dimension 1024 --device 'cuda' --seed "$seed" --evaluate
+        python3 src/train_ppi.py --mode 'train' --dataset 'ppi' --embeddings "$emb" --hidden_dimension 1024 --device 'cuda' --seed "$seed" --evaluate
     done
+done
+
+# Reproduce NaderiAlizadeh model with ESM2 650M
+for seed in "${seeds[@]}"; do
+    python3 src/train_ppi.py --mode 'train' --dataset 'ppi' --embeddings "1" --hidden_dimension 1024 --device 'cuda' --seed "$seed" --evaluate
+done
+
+# Lastly, run inference on the trained models to analyze top-k performance.
+checkpoints=('ppi/ppi_1_1024_2_f0e2de08/best_model.pth' 'ppi/ppi_1_1024_4_b1ae4d95/best_model.pth' 'ppi/ppi_1_1024_8_220c2075/best_model.pth' 'ppi/ppi_1_1024_16_34c7911f/best_model.pth' 'ppi/ppi_1_1024_32_616091d1/best_model.pth')
+for checkpoint in "${checkpoints[@]}"; do
+    python3 src/train_ppi.py --mode 'inference' --dataset 'ppi' --embeddings "1" --hidden_dimension 1024 --device 'cuda' --seed 0 --model_path "$checkpoint"
+done
+
+checkpoints=('ppi/ppi_DEF_1024_2_39eb62d1/best_model.pth' 'ppi/ppi_DEF_1024_4_12bd2d49/best_model.pth' 'ppi/ppi_DEF_1024_8_1d1f8eb0/best_model.pth' 'ppi/ppi_DEF_1024_16_234f4a8c/best_model.pth' 'ppi/ppi_DEF_1024_32_5e07a822/best_model.pth')
+# Lastly, run inference on the trained models to analyze top-k performance.
+for checkpoint in "${checkpoints[@]}"; do
+    python3 src/train_ppi.py --mode 'inference' --dataset 'ppi' --embeddings "DEF" --hidden_dimension 1024 --device 'cuda' --seed 0 --model_path "$checkpoint"
 done

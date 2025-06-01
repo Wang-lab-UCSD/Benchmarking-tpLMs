@@ -1,4 +1,7 @@
-# A: esm2
+# 0: ankh
+# 1: esm2 (3B)
+# 2: protT5
+
 # B: esm3
 # C: ontoprotein
 # D: proteinclip
@@ -6,51 +9,15 @@
 # F: protrek
 # G: proteindt
 
-# Train models for comparison of tpLMs with ESM2 3B
-
-embeddings=(A B C D E F G)
+# Train models for comparison of tpLMs with large pLMs.
+embeddings=("0" "1" "2" B C D E F G)
 seeds=(2 4 8 16 32)
+datasets=("aav" "gb1" "gfp" "location" "meltome" "stability")
 
-# AAV
-for emb in "${embeddings[@]}"; do
-    for seed in "${seeds[@]}"; do
-        python3 src/train_benchmarks.py --dataset 'aav' --embeddings "$emb" --hidden_dimension 32 --device 'cuda' --dropout 0.2 --seed "$seed" --evaluate
+for dataset in "${datasets[@]}"; do
+    for emb in "${embeddings[@]}"; do
+        for seed in "${seeds[@]}"; do
+            python3 src/train_benchmarks.py --mode train --dataset "$dataset" --embeddings "$emb" --hidden_dimension 32 --device 'cuda' --dropout 0.2 --seed "$seed" --evaluate
+        done
     done
 done
-
-# GB1
-for emb in "${embeddings[@]}"; do
-    for seed in "${seeds[@]}"; do
-        python3 src/train_benchmarks.py --dataset 'gb1' --embeddings "$emb" --hidden_dimension 32 --device 'cuda' --dropout 0.2 --seed "$seed" --evaluate
-    done
-done
-
-# GFP
-for emb in "${embeddings[@]}"; do
-    for seed in "${seeds[@]}"; do
-        python3 src/train_benchmarks.py --dataset 'gfp' --embeddings "$emb" --hidden_dimension 32 --device 'cuda' --dropout 0.2 --seed "$seed" --evaluate
-    done
-done
-
-# Location
-for emb in "${embeddings[@]}"; do
-    for seed in "${seeds[@]}"; do
-        python3 src/train_benchmarks.py --dataset 'location' --embeddings "$emb" --hidden_dimension 32 --device 'cuda' --dropout 0.2 --seed "$seed" --evaluate
-    done
-done
-
-# Meltome
-for emb in "${embeddings[@]}"; do
-    for seed in "${seeds[@]}"; do
-        python3 src/train_benchmarks.py --dataset 'meltome' --embeddings "$emb" --hidden_dimension 32 --device 'cuda' --dropout 0.2 --seed "$seed" --evaluate
-    done
-done
-
-# Stability
-for emb in "${embeddings[@]}"; do
-    for seed in "${seeds[@]}"; do
-        python3 src/train_benchmarks.py --dataset 'stability' --embeddings "$emb" --hidden_dimension 32 --device 'cuda' --dropout 0.2 --seed "$seed" --evaluate
-    done
-done
-
-

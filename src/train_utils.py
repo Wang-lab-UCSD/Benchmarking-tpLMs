@@ -51,7 +51,7 @@ def train_step(model, data_loader, optimizer, criterion, device):
     
     return total_loss / total_samples
 
-def test_step(model, data_loader, criterion, device):
+def test_step(model, data_loader, criterion, device, return_preds=False):
     model.eval()
     total_loss = 0
     total_samples = 0
@@ -70,9 +70,9 @@ def test_step(model, data_loader, criterion, device):
 
             all_targets.append(target)
             if isinstance(criterion, torch.nn.CrossEntropyLoss):
-                all_predictions.append(predictions.argmax(dim=1))  # If we are doing Location Classification
+                all_predictions.append(predictions.argmax(dim=1))
             else:
-                all_predictions.append(predictions)  # If we are doing any other dataset Regression
+                all_predictions.append(predictions)
 
     all_targets = torch.cat(all_targets, dim=0).detach().cpu().numpy()
     all_predictions = torch.cat(all_predictions, dim=0).detach().cpu().numpy()
@@ -81,6 +81,9 @@ def test_step(model, data_loader, criterion, device):
         metric = calculate_accuracy(all_targets, all_predictions)
     else:
         metric = calculate_spearman(all_targets, all_predictions)
+
+    if return_preds:
+        return total_loss / total_samples, metric, all_predictions
 
     return total_loss / total_samples, metric
 
@@ -131,7 +134,7 @@ def ppi_train_step(model, data_loader, optimizer, criterion, device):
         total_loss += loss.item()*batch_size
     return total_loss / total_samples
 
-def ppi_test_step(model, data_loader, criterion, device):
+def ppi_test_step(model, data_loader, criterion, device, return_preds=False):
     model.eval()
     total_loss = 0
     total_samples = 0
@@ -155,7 +158,13 @@ def ppi_test_step(model, data_loader, criterion, device):
     all_probabilities = torch.cat(all_probabilities, dim=0).detach().cpu().numpy()
 
     aucroc, prc, accuracy, sensitivity, specificity, precision, f1, mcc = calculate_classification_metrics(all_labels, all_probabilities)
-    return total_loss / total_samples, aucroc, prc, accuracy, sensitivity, specificity, precision, f1, mcc
+   
+    if return_preds:
+        return total_loss / total_samples, aucroc, prc, accuracy, sensitivity, specificity, precision, f1, mcc, all_probabilities
+    
+    else:
+        return total_loss / total_samples, aucroc, prc, accuracy, sensitivity, specificity, precision, f1, mcc
+    
 
 def calculate_classification_metrics(label, probabilities):
 

@@ -20,8 +20,9 @@ To reproduce the results from our study in sequential order, please follow the s
 1. `download_data_embs.sh`
 2. `run_tplm_benchmarks.sh`
 3. `run_embedding_fusion_benchmarks.sh`
-4. `run_ppi.sh`
-5. `run_cath.sh`
+4. `benchmark_selection_algs.ipynb`
+5. `run_ppi.sh`
+6. `run_cath.sh`
 ---
 ### :one: Downloading Data and Embeddings
 The data and embeddings are stored in HuggingFace and our `download_data_embs.sh` uses `huggingface-cli` to download the necessary files. 
@@ -65,19 +66,32 @@ We have provided sample scripts for generating embeddings for each protein langu
 </details>
 
 ---
-### :two: Benchmarking text-integrated protein language models against ESM2 3B
-Run `run_tplm_benchmarks.sh` to train models for benchmarking tpLMs against ESM2 3B on AAV, GB1, GFP, Location, Meltome, and Stability. 
+### :two: Benchmarking text-integrated protein language models against Ankh, ESM2 3B, and ProtT5.
+Run `run_tplm_benchmarks.sh` to train models for benchmarking tpLMs against large pLMs on AAV, GB1, GFP, Location, Meltome, and Stability. 
 
 ---
 ### :three: Evaluating embedding fusion
 Run `run_embedding_fusion_benchmarks.sh` to train models for benchmarking embedding fusion with tpLMs on AAV, GB1, GFP, Location, Meltome, and Stability. 
 
+After steps 2 and 3, we can run `analysis/benchmark_analysis.ipynb`. This notebook will read the output files of benchmarking and aggregate all the results, calculate the mean and 95% CIs of all single and combined embedding performances.
+
 ---
-### :four: Identifying optimal combinations and evaluating performance on protein-protein interaction prediction
-Run `run_ppi.sh` to use the greedy heuristic to identify a promising combination of embeddings, then train models with all possible combinations of embeddings to identify the true best combination.
+### :four: Evaluating different feature selection algorithms
+Run the `analysis/benchmark_selection_algs.ipynb` notebook to evaluate three different feature selection algorithms against the exhaustive search on AAV, GB1, GFP, Location, Meltome, and Stability. This step requires the results from steps 2 and 3 to properly run. 
+
+This notebook contains a python-version of the selection algorithms, and uses the results of steps 3 to run through the selection algorithms, recording the total time used. It also contains the code to generate Figure 3C. Please consider the term reverse elimination interchangeable with the term backward selection used in the paper. (This will be updated soon to remove any confusion.)
 
 ---
 ### :five: Identifying optimal combinations and evaluating performance on homologous sequence recovery
-Run `run_cath.sh` to use the greedy heuristic to identify a promising combination of embeddings, then evaluate all possible combinations of embeddings to identify the true best combination.
+Run `run_cath.sh` to use embedding fusion + greedier forward selection to identify a promising combination of embeddings, then evaluate all possible combinations of embeddings to identify the true best combination. Note, for this task, we can afford to check combinations including pLMs.
+
+In `analysis/homologous_sequence_vis.ipynb` we will visualize the embeddings of all the CATH dataset proteins with t-SNE, using first ProteinCLIP, the embedding that enabled the previous state-of-the-art results. Next, we will visualize the combination of embeddings found by GFS that enabled the new state-of-the-art results.
+
+
+---
+### :six: Identifying optimal combinations and evaluating performance on protein-protein interaction prediction
+Run `run_ppi.sh` to use embedding fusion + greedier forward selection to identify a promising combination of embeddings, then train models with all possible combinations of embeddings to identify the true best combination. We also train the original NaderiAlizadeh classifier with ESM2 650M, and also run inference to get the predicted probabilities of this model. Note, for inference, we need to load the model checkpoints. If reproducing the results, please ensure that you have first run training to generate the checkpoint. If you do not wish to train the model, we will upload the exact checkpoints used to the Huggingface repo above.
+
+Next, run `analysis/ppi_analysis.ipynb` For further analysis of our best embedding fusion combination, we will calculate the precision and number of false positives made in the top-k predictions of the previous best NaderiAlizadeh classifier, and compare them with our embedding fusion + GFS enabled model. 
 
 ---

@@ -34,7 +34,7 @@ def get_run_name(dataset, embedding_string, hidden_dimension, seed):
 
 # Set up logging files
 def setup_logging_directories(dataset, run_name, embedding_string):
-    if len(embedding_string) == 1:
+    if len(embedding_string) == 1 or embedding_string.isnumeric():
         log_directory = os.path.join("results", "tplm_benchmark_results")
         os.makedirs(log_directory, exist_ok=True)
     else:
@@ -45,13 +45,9 @@ def setup_logging_directories(dataset, run_name, embedding_string):
     if not os.path.exists(log_path):
         with open(log_path, 'w', newline='') as log_file:
             log_writer = csv.writer(log_file, delimiter='\t')
-            log_writer.writerow(['Dataset', 'Embedding', 'Hidden Dimension', 'Seed', 'Best Val Metric', 'Test Metric', 'Parameter Count'])
+            log_writer.writerow(['Dataset', 'Embedding', 'Hidden Dimension', 'Seed', 'Best Val Metric', 'Test Metric', 'Parameter Count', 'Max Memory', 'Run Time'])
 
-    individual_runs_dir = os.path.join(log_directory, "individual_runs", dataset)
-    os.makedirs(individual_runs_dir, exist_ok=True)
-    individual_file_path = os.path.join(individual_runs_dir, f"{run_name}.tsv")
-
-    return log_path, individual_file_path
+    return log_path
 
 def setup_ppi_logs(dataset, run_name):
     log_directory = os.path.join("results", "ppi_results")
@@ -77,31 +73,20 @@ def setup_cath_logs():
     if not os.path.exists(cath_log_path):
         with open(cath_log_path, 'w', newline='') as log_file:
             log_writer = csv.writer(log_file, delimiter='\t')
-            log_writer.writerow(['Embedding', 'Accuracy'])
+            log_writer.writerow(['Embedding', 'Accuracy', 'Class 1 Acc', 'Class 2 Acc', 'Class 3 Acc', 'Class 4 Acc', 'Class 6 Acc'])
 
     return cath_log_path
 
 # Load embedding dictionary
 def load_embeddings(embedding_string, task):
-    task_directories = {
-        'aav': 'aav',
-        'gb1': 'gb1',
-        'gfp': 'gfp',
-        'location': 'location',
-        'meltome': 'meltome',
-        'stability': 'stability',
-        'ppi': 'protein-protein',
-        'cath':'cath'
-    }
-
-    if task not in task_directories:
-        raise ValueError(f"Unknown task '{task}'. Available tasks are: {list(task_directories.keys())}")
-
     base_directory = 'embeddings'
-    task_directory = os.path.join(base_directory, task_directories[task])
+    task_directory = os.path.join(base_directory,task)
 
     embedding_map = {
-        'A': os.path.join(task_directory, 'esm2(3B)/protein_dictionary.pt'),
+        '0': os.path.join(task_directory, 'ankh/protein_dictionary.pt'),
+        '1': os.path.join(task_directory, 'esm2(650M)/protein_dictionary.pt') if task =='ppi' else os.path.join(task_directory, 'esm2(3B)/protein_dictionary.pt'),
+        '2': os.path.join(task_directory, 'prott5/protein_dictionary.pt'),
+        
         'B': os.path.join(task_directory, 'esm3/protein_dictionary.pt'),
         'C': os.path.join(task_directory, 'ontoprotein/protein_dictionary.pt'),
         'D': os.path.join(task_directory, 'proteinclip_esm3b/protein_dictionary.pt') if task=='cath' else os.path.join(task_directory, 'proteinclip_t5/protein_dictionary.pt') ,
@@ -148,6 +133,7 @@ def concatenate_embeddings(dict_list):
 # Return number of trainable parameters in the model
 def count_parameters(model):
     return sum(p.numel() for p in model.parameters() if p.requires_grad)
+
 
 # Saving best model
 def save_model(model, filename):

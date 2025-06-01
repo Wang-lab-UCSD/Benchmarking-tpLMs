@@ -1,6 +1,7 @@
 # Training Parameters
 training:
-  batch_size: 4096
+  batch_size: 4096 # 4096 used for all other training, for speed.
+  #batch_size: 32 # 32 is used for reproduce NaderiAlizadeh 
   learning_rate: 0.0001
   iteration: 50
  
